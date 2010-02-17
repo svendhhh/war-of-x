@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    backgroundGradientColors="[#0e2e7d, #6479ab]"
+    layout="vertical"
+    verticalAlign="middle">
+    
+    <mx:Script>
+    	<![CDATA[
+    		import mx.controls.Alert;
+    		import mx.rpc.events.FaultEvent;
+    		
+    		
+			public function faultHandler(event:FaultEvent):void {
+				Alert.show( "Fault: " + event.fault + " Msg: " + event.message );
+			}
+    		
+    	]]>
+    </mx:Script>
+
+    <mx:Style>
+        .Panel {
+            padding-left: 8px; padding-top: 8px;
+            padding-right: 8px; padding-bottom: 8px;
+        }
+        .Result { font-size: 26px; color: white; }
+    </mx:Style>
+
+    <mx:RemoteObject id="srv" destination="helloWorldService"
+    	 fault="faultHandler(event)" />
+
+    <mx:Panel styleName="Panel" title="Hello World Sample">
+        <mx:Label text="Enter your name:"/>
+        <mx:TextInput id="nameInput" enter="srv.sayHello(nameInput.text)" />
+        <mx:Button label="Say Hello" click="srv.sayHello(nameInput.text)"/>
+    </mx:Panel>
+        
+    <mx:Label styleName="Result" text="{srv.sayHello.lastResult}"/>
+
+</mx:Application>

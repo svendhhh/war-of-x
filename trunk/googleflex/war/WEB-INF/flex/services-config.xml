@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<services-config>
+
+    <services>
+        <service
+            id="granite-service"
+            class="flex.messaging.services.RemotingService"
+            messageTypes="flex.messaging.messages.RemotingMessage">
+            <destination id="helloWorldService">
+                <channels>
+                    <channel ref="my-graniteamf"/>
+                </channels>
+                <properties>
+                    <scope>application</scope>
+                    <source>com.hansel.HelloWorldService</source>
+                </properties>
+            </destination>
+        </service>
+        
+        
+        <service id="messaging-service"
+            class="flex.messaging.services.MessagingService"
+            messageTypes="flex.messaging.messages.AsyncMessage">
+            <adapters>
+                <adapter-definition
+                    id="default"
+                    class="org.granite.gravity.gae.GAEServiceAdapter"
+                    default="true"/>
+            </adapters>
+
+            <destination id="gravity">
+                <channels>
+                    <channel ref="my-gravityamf"/>
+                </channels>
+            </destination>
+        </service>
+        
+        
+    </services>
+
+    <channels>
+        <channel-definition id="my-graniteamf" class="mx.messaging.channels.AMFChannel">
+            <endpoint
+                uri="/graniteamf/amf"
+                class="flex.messaging.endpoints.AMFEndpoint"/>
+        </channel-definition>
+        
+        
+         <channel-definition
+            id="my-gravityamf"
+            class="org.granite.gravity.channels.GravityChannel">
+            <endpoint
+                uri="/gravity/amf"
+                class="flex.messaging.endpoints.AMFEndpoint"/>
+        </channel-definition>
+        
+    </channels>
+
+</services-config>
