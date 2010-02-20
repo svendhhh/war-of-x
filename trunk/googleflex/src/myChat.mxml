@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="horizontal"
+	creationComplete="init()">
+	
+	<mx:Script>
+    	<![CDATA[
+    		import com.hansel.ChatEntry;
+    		import mx.rpc.events.ResultEvent;
+    		import mx.collections.ArrayCollection;
+    		import mx.controls.Alert;
+    		import mx.rpc.events.FaultEvent; 
+	
+    		private var myTimer:Timer = new Timer(1000, 0);
+
+			public function faultHandler(event:FaultEvent):void {
+				Alert.show( "Fault: " + event.fault + " Msg: " + event.message );
+			}
+			
+			public function init():void {
+				myTimer.addEventListener(TimerEvent.TIMER,updateChat);
+				myTimer.start();
+			}
+			
+			public function updateChat(event:TimerEvent):void {
+				chatSrv.getChat();
+			}
+			
+			public function send():void {
+				chatSrv.addChat('Me',chatIn.text);
+				chatIn.text='';	
+			}
+			
+			public function chatHandler(event:ResultEvent):void {
+				chatBox.text="";
+				for(var i:int=0; i<event.result.length; i++){
+					var obj:ChatEntry = event.result[i];
+					chatBox.text += obj.user + " : " + obj.chatText + "\n"; 
+				}
+				chatBox.verticalScrollPosition = chatBox.maxVerticalScrollPosition;
+			}
+    		
+    	]]>
+    </mx:Script>
+	
+	<mx:RemoteObject id="chatSrv" destination="chatService"
+    	 fault="faultHandler(event)">
+    	 <mx:method name="getChat" result="chatHandler(event)" />
+
+   	</mx:RemoteObject>
+	
+	<mx:Panel width="500" height="400" title="My Super Chat" layout="horizontal" horizontalGap="0">
+		<mx:VDividedBox height="360">
+			<mx:TextArea width="380" height="310" editable="false" id="chatBox" borderThickness="1" borderStyle="solid" />
+			<mx:TextInput  width="380" id="chatIn" enter="send()" />
+		</mx:VDividedBox>
+		<mx:VBox verticalGap="0">
+			<mx:List width="100" height="320" borderStyle="solid" id="usersList"/>
+			<mx:Button height="40" width="100" label="Send"  cornerRadius="0" id="sendButton"
+				click="send()"/>
+		</mx:VBox>
+	</mx:Panel>
+	
+</mx:Application>
