@@ -10,7 +10,6 @@
     		import mx.controls.Alert;
     		import mx.rpc.events.FaultEvent;
     		
-    		
 			public function faultHandler(event:FaultEvent):void {
 				Alert.show( "Fault: " + event.fault + " Msg: " + event.message );
 			}

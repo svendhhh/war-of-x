@@ -30,6 +30,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.granite.builder.granitebuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
@@ -37,5 +42,13 @@
 		<nature>com.google.gdt.eclipse.core.webAppNature</nature>
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+		<nature>org.granite.builder.granitenature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>flex</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/James/workspace/googleflex/war/googleflex</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -16,7 +16,17 @@
                     <source>com.hansel.HelloWorldService</source>
                 </properties>
             </destination>
+            <destination id="chatService">
+                <channels>
+                    <channel ref="my-graniteamf"/>
+                </channels>
+                <properties>
+                    <scope>application</scope>
+                    <source>com.hansel.ChatService</source>
+                </properties>
+            </destination>
         </service>
+        
         
         
         <service id="messaging-service"
