@@ -5,6 +5,9 @@
 	
 	<mx:Script>
     	<![CDATA[
+    		import mx.controls.textClasses.TextRange;
+    		import com.hansel.LoginEntry;
+    		import flash.net.navigateToURL;
     		import com.hansel.ChatEntry;
     		import mx.rpc.events.ResultEvent;
     		import mx.collections.ArrayCollection;
@@ -12,31 +15,54 @@
     		import mx.rpc.events.FaultEvent; 
 	
     		private var myTimer:Timer = new Timer(1000, 0);
+    		private var lastUpdateTime:Number = 0;
 
 			public function faultHandler(event:FaultEvent):void {
 				Alert.show( "Fault: " + event.fault + " Msg: " + event.message );
 			}
 			
 			public function init():void {
-				myTimer.addEventListener(TimerEvent.TIMER,updateChat);
-				myTimer.start();
+				chatSrv.loginURL();
 			}
 			
 			public function updateChat(event:TimerEvent):void {
-				chatSrv.getChat();
+				chatSrv.getChat(lastUpdateTime);
 			}
 			
 			public function send():void {
-				chatSrv.addChat('Me',chatIn.text);
+				if(chatIn.text.length==0)return;
+				chatSrv.addChat(chatIn.text);
 				chatIn.text='';	
 			}
 			
-			public function chatHandler(event:ResultEvent):void {
-				chatBox.text="";
-				for(var i:int=0; i<event.result.length; i++){
-					var obj:ChatEntry = event.result[i];
-					chatBox.text += obj.user + " : " + obj.chatText + "\n"; 
+			public function loginHandler(event:ResultEvent):void {
+				var loginEntry:LoginEntry = event.result as LoginEntry;
+				if(loginEntry.isLoggedIn) {
+					myTimer.addEventListener(TimerEvent.TIMER,updateChat);
+					myTimer.start();
+					chatPanel.visible=true;
+					lastUpdateTime = loginEntry.timestamp;
+					
+					chatBox.htmlText = loginEntry.greeting + "<br>";
+					
 				}
+				else{
+					navigateToURL(new URLRequest(loginEntry.redirectURL),'_self');
+				}
+			}
+
+			public function chatHandler(event:ResultEvent):void {
+				for(var i:int=0; i<event.result.length; i++){
+					var entry:ChatEntry = event.result[i];
+					var range:TextRange = new TextRange(chatBox);
+					var date:Date = new Date(entry.timestamp);
+					chatBox.htmlText += "<font color='#3333EE'>[" + date.toLocaleTimeString() 
+									 + 	" " + entry.user + "]</font> " + entry.chatText + "<br>";
+					lastUpdateTime = entry.timestamp;
+				}
+			}
+			
+			public function scrollToBottom():void{
 				chatBox.verticalScrollPosition = chatBox.maxVerticalScrollPosition;
 			}
     		
@@ -44,15 +70,16 @@
     </mx:Script>
 	
 	<mx:RemoteObject id="chatSrv" destination="chatService"
-    	 fault="faultHandler(event)">
+    	 fault="faultHandler(event)" concurrency="single">
     	 <mx:method name="getChat" result="chatHandler(event)" />
+    	 <mx:method name="loginURL" result="loginHandler(event)" />
 
    	</mx:RemoteObject>
 	
-	<mx:Panel width="500" height="400" title="My Super Chat" layout="horizontal" horizontalGap="0">
+	<mx:Panel id="chatPanel" width="500" height="400" title="My Super Chat" layout="horizontal" horizontalGap="0" visible="false">
 		<mx:VDividedBox height="360">
-			<mx:TextArea width="380" height="310" editable="false" id="chatBox" borderThickness="1" borderStyle="solid" />
-			<mx:TextInput  width="380" id="chatIn" enter="send()" />
+			<mx:TextArea width="380" height="310" editable="false" id="chatBox" borderThickness="1" borderStyle="solid" updateComplete="scrollToBottom()" />
+			<mx:TextInput width="380" id="chatIn" enter="send()" />
 		</mx:VDividedBox>
 		<mx:VBox verticalGap="0">
 			<mx:List width="100" height="320" borderStyle="solid" id="usersList"/>
