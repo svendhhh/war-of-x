@@ -23,6 +23,7 @@ package com.hansel {
 
         public var _chatText:String;
         private var _key:String;
+        public var _timestamp:Number;
         public var _user:String;
 
         meta function isInitialized(name:String = null):Boolean {
@@ -43,6 +44,13 @@ package com.hansel {
             return _chatText;
         }
 
+        public function set timestamp(value:Number):void {
+            _timestamp = value;
+        }
+        public function get timestamp():Number {
+            return _timestamp;
+        }
+
         public function set user(value:String):void {
             _user = value;
         }
@@ -56,6 +64,7 @@ package com.hansel {
             if (meta::isInitialized()) {
                 _chatText = input.readObject() as String;
                 _key = input.readObject() as String;
+                _timestamp = function(o:*):Number { return (o is Number ? o as Number : Number.NaN) } (input.readObject());
                 _user = input.readObject() as String;
             }
             else {
@@ -69,6 +78,7 @@ package com.hansel {
             if (meta::isInitialized()) {
                 output.writeObject(_chatText);
                 output.writeObject(_key);
+                output.writeObject(_timestamp);
                 output.writeObject(_user);
             }
             else {
