@@ -16,6 +16,7 @@ package com.hansel {
 
         public var _greeting:String;
         public var _isLoggedIn:Boolean;
+        public var _logoutURL:String;
         public var _redirectURL:String;
         public var _timestamp:Number;
 
@@ -31,6 +32,13 @@ package com.hansel {
         }
         public function get isLoggedIn():Boolean {
             return _isLoggedIn;
+        }
+
+        public function set logoutURL(value:String):void {
+            _logoutURL = value;
+        }
+        public function get logoutURL():String {
+            return _logoutURL;
         }
 
         public function set redirectURL(value:String):void {
@@ -50,6 +58,7 @@ package com.hansel {
         public function readExternal(input:IDataInput):void {
             _greeting = input.readObject() as String;
             _isLoggedIn = input.readObject() as Boolean;
+            _logoutURL = input.readObject() as String;
             _redirectURL = input.readObject() as String;
             _timestamp = function(o:*):Number { return (o is Number ? o as Number : Number.NaN) } (input.readObject());
         }
@@ -57,6 +66,7 @@ package com.hansel {
         public function writeExternal(output:IDataOutput):void {
             output.writeObject(_greeting);
             output.writeObject(_isLoggedIn);
+            output.writeObject(_logoutURL);
             output.writeObject(_redirectURL);
             output.writeObject(_timestamp);
         }
