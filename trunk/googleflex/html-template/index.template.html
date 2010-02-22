@@ -78,7 +78,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 	// if we've detected an acceptable version
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
-			"src", "${swf}",
+			"src", "${swf}?cb=" + new Date().getTime(),
 			"width", "${width}",
 			"height", "${height}",
 			"align", "middle",

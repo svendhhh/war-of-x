@@ -10,14 +10,16 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class ChatEntry implements Comparable<ChatEntry>, Serializable{
+public class ChatEntry extends ExpiryCacheable implements Serializable{
+	private static final long serialVersionUID = -3712988440023702414L;
+
 	@SuppressWarnings("unused")
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
 
 	@Persistent
-	public String user;
+	public UserEntry user;
 
 	@Persistent
 	public String chatText;
@@ -25,7 +27,7 @@ public class ChatEntry implements Comparable<ChatEntry>, Serializable{
 	@Persistent
 	public Long timestamp;
 
-	public ChatEntry(String user, String chatText) {
+	public ChatEntry(UserEntry user, String chatText) {
 		super();
 		this.user = user;
 		this.chatText = chatText;
@@ -33,7 +35,7 @@ public class ChatEntry implements Comparable<ChatEntry>, Serializable{
 	}
 
 	@Override
-	public int compareTo(ChatEntry o) {
-		return (int) (timestamp-o.timestamp);
+	public long getTimestamp() {
+		return timestamp;
 	}
 }
