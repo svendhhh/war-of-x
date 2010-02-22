@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	layout="horizontal"
-	creationComplete="init()">
+	creationComplete="init()"
+	pageTitle="My Super Chat">
 	
 	<mx:Script>
     	<![CDATA[
+    		import com.hansel.UpdateEntry;
     		import mx.controls.textClasses.TextRange;
     		import com.hansel.LoginEntry;
     		import flash.net.navigateToURL;
@@ -16,10 +18,12 @@
 	
     		private var updateTimer:Timer = new Timer(1000, 1);
     		private var lastUpdateTime:Number = 0;
+    		[Bindable]
+    		private var latestUpdate:UpdateEntry;
     		private var logoutURL:String;
 
-			public function chatFaultHandler(event:FaultEvent):void {
-				chatBox.htmlText += "<font color='#FF2222'>Error: Update failed.</font><br>";
+			public function updateFaultHandler(event:FaultEvent):void {				
+				chatBox.htmlText += "<font color='#FF2222'>["+ new Date().toLocaleTimeString() +"] Error: Update failed.</font><br>";
 				updateTimer.reset();
 				updateTimer.start();
 			}
@@ -33,7 +37,7 @@
 			}
 			
 			public function updateChat(event:TimerEvent):void {
-				chatSrv.getChat(lastUpdateTime);
+				chatSrv.getUpdate(lastUpdateTime);
 			}
 			
 			public function send():void {
@@ -48,7 +52,7 @@
 					updateTimer.addEventListener(TimerEvent.TIMER,updateChat);
 					updateTimer.start();
 					chatPanel.visible=true;
-					lastUpdateTime = loginEntry.timestamp;
+					//lastUpdateTime = loginEntry.timestamp;
 					logoutURL = loginEntry.logoutURL;
 					
 					chatBox.htmlText = "<font color='#33CC33'>"+loginEntry.greeting + "</font><br>";
@@ -63,13 +67,13 @@
 				navigateToURL(new URLRequest(logoutURL),'_self');
 			}
 
-			public function chatHandler(event:ResultEvent):void {
-				for(var i:int=0; i<event.result.length; i++){
-					var entry:ChatEntry = event.result[i];
-					var range:TextRange = new TextRange(chatBox);
+			public function updateHandler(event:ResultEvent):void {
+				latestUpdate = event.result as UpdateEntry;
+				for(var i:int=0; i<latestUpdate.chatUpdates.length; i++){
+					var entry:ChatEntry = latestUpdate.chatUpdates[i];
 					var date:Date = new Date(entry.timestamp);
 					chatBox.htmlText += "<font color='#3333EE'>[" + date.toLocaleTimeString() 
-									 + 	" " + entry.user + "]</font> " + entry.chatText + "<br>";
+									 + 	" " + entry.user.nickName + "]</font> " + entry.chatText + "<br>";
 					lastUpdateTime = entry.timestamp;
 				}
 				updateTimer.reset();
@@ -84,18 +88,18 @@
     </mx:Script>
 	
 	<mx:RemoteObject id="chatSrv" destination="chatService">
-    	 <mx:method name="getChat" result="chatHandler(event)" fault="chatFaultHandler(event)" />
+    	 <mx:method name="getUpdate" result="updateHandler(event)" fault="updateFaultHandler(event)" />
     	 <mx:method name="loginURL" result="loginHandler(event)" fault="loginFaultHandler(event)" />
    	</mx:RemoteObject>
 	
-	<mx:Panel id="chatPanel" width="500" height="400" title="My Super Chat" layout="horizontal" horizontalGap="0" visible="false">
+	<mx:Panel id="chatPanel" title="My Super Chat" layout="horizontal" horizontalGap="0" visible="false">
 		<mx:VDividedBox height="360">
 			<mx:TextArea width="380" height="310" editable="false" id="chatBox" borderThickness="1" borderStyle="solid" updateComplete="scrollToBottom()" />
 			<mx:TextInput width="380" id="chatIn" enter="send()" />
 		</mx:VDividedBox>
 		<mx:VBox verticalGap="0">
 		<mx:Button height="20" width="100" label="Logout"  cornerRadius="0" id="logoutButton" click="logout()"/>
-			<mx:List width="100" height="300" borderStyle="solid" id="usersList"/>
+			<mx:List width="100" height="300" borderStyle="solid" id="usersList" dataProvider="{latestUpdate.activeUsers}" />
 			<mx:Button height="40" width="100" label="Send"  cornerRadius="0" id="sendButton" click="send()"/>
 		</mx:VBox>
 	</mx:Panel>
