@@ -14,11 +14,18 @@
     		import mx.controls.Alert;
     		import mx.rpc.events.FaultEvent; 
 	
-    		private var myTimer:Timer = new Timer(1000, 0);
+    		private var updateTimer:Timer = new Timer(1000, 1);
     		private var lastUpdateTime:Number = 0;
+    		private var logoutURL:String;
 
-			public function faultHandler(event:FaultEvent):void {
-				Alert.show( "Fault: " + event.fault + " Msg: " + event.message );
+			public function chatFaultHandler(event:FaultEvent):void {
+				chatBox.htmlText += "<font color='#FF2222'>Error: Update failed.</font><br>";
+				updateTimer.reset();
+				updateTimer.start();
+			}
+			
+			public function loginFaultHandler(event:FaultEvent):void {
+				Alert.show( "Could not Login: " + event.fault);
 			}
 			
 			public function init():void {
@@ -38,17 +45,22 @@
 			public function loginHandler(event:ResultEvent):void {
 				var loginEntry:LoginEntry = event.result as LoginEntry;
 				if(loginEntry.isLoggedIn) {
-					myTimer.addEventListener(TimerEvent.TIMER,updateChat);
-					myTimer.start();
+					updateTimer.addEventListener(TimerEvent.TIMER,updateChat);
+					updateTimer.start();
 					chatPanel.visible=true;
 					lastUpdateTime = loginEntry.timestamp;
+					logoutURL = loginEntry.logoutURL;
 					
-					chatBox.htmlText = loginEntry.greeting + "<br>";
+					chatBox.htmlText = "<font color='#33CC33'>"+loginEntry.greeting + "</font><br>";
 					
 				}
 				else{
 					navigateToURL(new URLRequest(loginEntry.redirectURL),'_self');
 				}
+			}
+			
+			public function logout():void {
+				navigateToURL(new URLRequest(logoutURL),'_self');
 			}
 
 			public function chatHandler(event:ResultEvent):void {
@@ -60,6 +72,8 @@
 									 + 	" " + entry.user + "]</font> " + entry.chatText + "<br>";
 					lastUpdateTime = entry.timestamp;
 				}
+				updateTimer.reset();
+				updateTimer.start();
 			}
 			
 			public function scrollToBottom():void{
@@ -69,11 +83,9 @@
     	]]>
     </mx:Script>
 	
-	<mx:RemoteObject id="chatSrv" destination="chatService"
-    	 fault="faultHandler(event)" concurrency="single">
-    	 <mx:method name="getChat" result="chatHandler(event)" />
-    	 <mx:method name="loginURL" result="loginHandler(event)" />
-
+	<mx:RemoteObject id="chatSrv" destination="chatService">
+    	 <mx:method name="getChat" result="chatHandler(event)" fault="chatFaultHandler(event)" />
+    	 <mx:method name="loginURL" result="loginHandler(event)" fault="loginFaultHandler(event)" />
    	</mx:RemoteObject>
 	
 	<mx:Panel id="chatPanel" width="500" height="400" title="My Super Chat" layout="horizontal" horizontalGap="0" visible="false">
@@ -82,9 +94,9 @@
 			<mx:TextInput width="380" id="chatIn" enter="send()" />
 		</mx:VDividedBox>
 		<mx:VBox verticalGap="0">
-			<mx:List width="100" height="320" borderStyle="solid" id="usersList"/>
-			<mx:Button height="40" width="100" label="Send"  cornerRadius="0" id="sendButton"
-				click="send()"/>
+		<mx:Button height="20" width="100" label="Logout"  cornerRadius="0" id="logoutButton" click="logout()"/>
+			<mx:List width="100" height="300" borderStyle="solid" id="usersList"/>
+			<mx:Button height="40" width="100" label="Send"  cornerRadius="0" id="sendButton" click="send()"/>
 		</mx:VBox>
 	</mx:Panel>
 	
