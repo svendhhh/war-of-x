@@ -24,7 +24,7 @@ public class ChatService {
 		return new LoginEntry(user!=null, loginURL, System.currentTimeMillis(), 
 				user!=null?("Hello "+user.getNickname()+", welcome to the chat room"):"", logoutURL);
 	}
-
+	
 	public synchronized UpdateEntry getUpdate(long lastUpdateTime) throws CacheException {
 		
 		//Get the user, add null check in future.
@@ -44,6 +44,7 @@ public class ChatService {
 			List<ChatEntry> curentChat = (List<ChatEntry>)pm.newQuery(query).execute();
 			//Add them to the TreeMap
 			for(ChatEntry e: curentChat){
+				e.user = pm.getObjectById(UserEntry.class, e.userID);
 				worldChatCache.entries.put(e, e);
 			}
 			//Put the TreeMap in the cache
@@ -56,10 +57,10 @@ public class ChatService {
 		out:
 		if(!worldChatCache.entries.isEmpty()){
 			//If the last entry is the same as the clients no updates are needed.
-			if(worldChatCache.entries.lastEntry().getValue().timestamp <= lastUpdateTime) break out;
+			if(worldChatCache.entries.lastEntry().getValue().getTimestamp() <= lastUpdateTime) break out;
 			//Add all new entries to the results
 			for(ChatEntry e: worldChatCache.entries.values()){
-				if(e.timestamp <= lastUpdateTime) continue;
+				if(e.getTimestamp() <= lastUpdateTime) continue;
 				chatUpdates.add(e);
 			}
 		}
@@ -79,7 +80,7 @@ public class ChatService {
 			userCache.cache.put(GlobalCaches.USERS, userCache.entries);
 			
 		}
-		seenUser(user, userCache, pm, true);
+		seenUser(user, userCache, pm);
 		
 		//Remove old and save if needed.
 		if(userCache.entries.removeOld())userCache.cache.put(GlobalCaches.USERS, userCache.entries);
@@ -97,7 +98,7 @@ public class ChatService {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		CacheWrapper<String,UserEntry> userCache = GlobalCaches.getCache(GlobalCaches.USERS);
-		UserEntry userEntry = seenUser(user, userCache, pm, false);
+		UserEntry userEntry = seenUser(user, userCache, pm);
 		
 		//Create a new chatEntry and save it
 		ChatEntry newChat = new ChatEntry(userEntry, chatText);
@@ -109,16 +110,16 @@ public class ChatService {
 		worldChatCache.cache.put(GlobalCaches.WORLDCHAT, worldChatCache.entries);
 	}
 	
-	private UserEntry seenUser(User user, CacheWrapper<String,UserEntry> userCache, PersistenceManager pm, boolean save){
+	private UserEntry seenUser(User user, CacheWrapper<String,UserEntry> userCache, PersistenceManager pm){
 		UserEntry userEntry = userCache.entries.get(user.getUserId());
 		if(userEntry==null){
 			userEntry = new UserEntry(user);
 		}
-		userEntry.lastSeen=System.currentTimeMillis();
+		userEntry.lastSeen = System.currentTimeMillis();
 		userCache.entries.put(user.getUserId(), userEntry);
 		userCache.cache.put(GlobalCaches.USERS, userCache.entries);
 		
-		if(save)pm.makePersistent(userEntry);
+		pm.makePersistent(userEntry);
 		
 		return userEntry;
 	}

@@ -16,7 +16,7 @@
     		import mx.controls.Alert;
     		import mx.rpc.events.FaultEvent; 
 	
-    		private var updateTimer:Timer = new Timer(1000, 1);
+    		private var updateTimer:Timer = new Timer(3000, 1);
     		private var lastUpdateTime:Number = 0;
     		[Bindable]
     		private var latestUpdate:UpdateEntry;
@@ -50,12 +50,12 @@
 				var loginEntry:LoginEntry = event.result as LoginEntry;
 				if(loginEntry.isLoggedIn) {
 					updateTimer.addEventListener(TimerEvent.TIMER,updateChat);
-					updateTimer.start();
 					chatPanel.visible=true;
 					//lastUpdateTime = loginEntry.timestamp;
 					logoutURL = loginEntry.logoutURL;
 					
 					chatBox.htmlText = "<font color='#33CC33'>"+loginEntry.greeting + "</font><br>";
+					chatSrv.getUpdate(lastUpdateTime);
 					
 				}
 				else{
@@ -73,7 +73,7 @@
 					var entry:ChatEntry = latestUpdate.chatUpdates[i];
 					var date:Date = new Date(entry.timestamp);
 					chatBox.htmlText += "<font color='#3333EE'>[" + date.toLocaleTimeString() 
-									 + 	" " + entry.user.nickName + "]</font> " + entry.chatText + "<br>";
+								 + 	" " + entry.user.nickName + "]</font> " + entry.chatText + "<br>";
 					lastUpdateTime = entry.timestamp;
 				}
 				updateTimer.reset();

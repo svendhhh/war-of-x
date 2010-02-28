@@ -4,9 +4,9 @@
     <source path="src" includes="**/*Entry*" excludes="" output="as3src;"/>
     <template kind="ENUM" uris="class:org/granite/generator/template/enum.gsp"/>
     <template kind="INTERFACE" uris="class:org/granite/generator/template/interface.gsp"/>
-    <template kind="REMOTE_DESTINATION" uris="class:org/granite/generator/template/remote.gsp;class:org/granite/generator/template/remoteBase.gsp"/>
-    <template kind="BEAN" uris="class:org/granite/generator/template/bean.gsp;class:org/granite/generator/template/beanBase.gsp"/>
     <template kind="ENTITY" uris="class:org/granite/generator/template/entity.gsp;class:org/granite/generator/template/entityBase.gsp"/>
+    <template kind="BEAN" uris="class:org/granite/generator/template/bean.gsp;class:org/granite/generator/template/beanBase.gsp"/>
+    <template kind="REMOTE_DESTINATION" uris="class:org/granite/generator/template/remote.gsp;class:org/granite/generator/template/remoteBase.gsp"/>
     <transformer type="org.granite.generator.as3.JavaAs3GroovyTransformer"/>
   </gas3>
 </graniteProperties>
