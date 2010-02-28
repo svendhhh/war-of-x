@@ -40,16 +40,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </welcome-file-list>
     
     <servlet>
-        <servlet-name>GravityServlet</servlet-name>
-        <servlet-class>org.granite.gravity.gae.GravityGAEServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>GravityServlet</servlet-name>
-        <url-pattern>/gravity/*</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
 		<servlet-name>Googletest</servlet-name>
 		<servlet-class>com.hansel.GoogletestServlet</servlet-class>
 	</servlet>
@@ -57,6 +47,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>Googletest</servlet-name>
 		<url-pattern>/googletest</url-pattern>
 	</servlet-mapping>
-    
-
+	
 </web-app>

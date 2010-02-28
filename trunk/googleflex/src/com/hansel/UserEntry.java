@@ -6,6 +6,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.granite.messaging.amf.io.util.externalizer.annotation.ExternalizedBean;
+
 import com.google.appengine.api.users.User;
 
 @PersistenceCapable
@@ -21,7 +23,7 @@ public class UserEntry extends ExpiryCacheable implements Serializable{
 	public String nickName;
 
 	@Persistent
-	public Long lastSeen;
+	public long lastSeen;
 	
 	public UserEntry(User user) {
 		super();
@@ -36,5 +38,4 @@ public class UserEntry extends ExpiryCacheable implements Serializable{
 	public long getTimestamp() {
 		return lastSeen;
 	}
-
 }

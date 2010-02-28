@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flex-config>
+   <compiler>
+      <keep-as3-metadata>
+        <name>Bindable</name>
+        <name>ChangeEvent</name>
+        <name>Constraint</name>
+        <name>Destroy</name>
+        <name>Id</name>
+        <name>In</name>
+        <name>Managed</name>
+        <name>ManagedEvent</name>
+        <name>Name</name>
+        <name>NonCommittingChangeEvent</name>
+        <name>Observer</name>
+        <name>Out</name>
+        <name>Transient</name>
+        <name>Version</name>
+      </keep-as3-metadata>
+   </compiler>
+   <includes>
+      <symbol>com.hansel.ChatEntry</symbol>
+      <symbol>com.hansel.ChatEntryBase</symbol>
+      <symbol>com.hansel.LoginEntry</symbol>
+      <symbol>com.hansel.LoginEntryBase</symbol>
+      <symbol>com.hansel.UpdateEntry</symbol>
+      <symbol>com.hansel.UpdateEntryBase</symbol>
+      <symbol>com.hansel.UserEntry</symbol>
+      <symbol>com.hansel.UserEntryBase</symbol>
+   </includes>
+</flex-config>
