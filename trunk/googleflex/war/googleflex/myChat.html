@@ -18,7 +18,7 @@ Learn more about Flex at http://flex.org
 <link rel="stylesheet" type="text/css" href="history/history.css" />
 <!--  END Browser History required section -->
 
-<title></title>
+<title>My Super Chat</title>
 <script src="AC_OETags.js" language="javascript"></script>
 
 <!--  BEGIN Browser History required section -->
@@ -78,7 +78,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 	// if we've detected an acceptable version
 	// embed the Flash Content SWF when all tests are passed
 	AC_FL_RunContent(
-			"src", "myChat",
+			"src", "myChat?cb=" + new Date().getTime(),
 			"width", "100%",
 			"height", "100%",
 			"align", "middle",

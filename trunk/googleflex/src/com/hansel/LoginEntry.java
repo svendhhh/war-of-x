@@ -13,8 +13,6 @@ public class LoginEntry {
 	public long timestamp;
 	public String greeting;
 	public String logoutURL;
-	
-	protected List<String> testList = new ArrayList<String>();
 
 	public LoginEntry(boolean isLoggedIn, String redirectURL, long timestamp, String greeting, String logoutURL) {
 		super();
@@ -23,7 +21,5 @@ public class LoginEntry {
 		this.timestamp = timestamp;
 		this.greeting = greeting;
 		this.logoutURL = logoutURL;
-		testList.add("hello");
-		testList.add("test");
 	}
 }
